@@ -33,6 +33,27 @@ I connected Power BI to the SQL database via a **Python Script connection**.
 <img width="935" height="524" alt="powerBI" src="https://github.com/user-attachments/assets/d276f7fd-0cd7-41fa-9efb-02f39e3c0462" />
 
 ---
+---
+
+## 🏗️ Technical Architecture & Methodology
+
+### **1. Data Cleaning Strategy**
+With **100,000+ records**, data integrity was the top priority:
+- **Noise Reduction:** Used Regex in Python to strip non-numeric characters from price fields, ensuring 100% calculation accuracy.
+- **Outlier Management:** Analyzed `Price_per_Sqft` to identify and handle anomalies that could skew the "Average Market Rate" KPIs.
+- **Deduplication:** Implemented string normalization to merge inconsistent builder names (e.g., "Prestige Group" vs "Prestige").
+
+### **2. Schema & Storage (SQL Integration)**
+Migrating to **SQLite** allowed for:
+- **Relational Structure:** Organized data to support complex queries and future-proof the pipeline for additional datasets.
+- **Optimized Performance:** Designed the table for rapid filtering, ensuring the Power BI dashboard remains responsive despite the large row count.
+
+### **3. Business Logic (DAX Implementation)**
+I implemented custom **DAX** to uncover hidden patterns:
+- **Market Valuation:** Created dynamic measures to track price shifts across different micro-markets.
+- **Amenity Impact:** Developed a correlation logic to see how `Amenity_Score` influences final `Ticket_Price_Cr`.
+
+---
 
 ## 🔍 SQL Data Validation
 To ensure the data was loaded correctly, I executed several validation queries:
