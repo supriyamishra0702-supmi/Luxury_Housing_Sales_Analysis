@@ -1,93 +1,67 @@
 # 📄 Project Documentation: Luxury Housing Sales Analysis – Bengaluru
 
 ## 🚀 Project Summary
-> "This project delivers an end-to-end Business Intelligence solution for the luxury real estate market in Bengaluru. Using a dataset of 100,000+ records, I built a modular ETL pipeline in **Python** to clean and engineer features, migrated the processed data into a **SQL (SQLite)** environment for structured storage, and developed an interactive **Power BI** dashboard. The analysis uncovers critical market hotspots, builder performance rankings, and configuration demand shifts, providing data-driven insights to optimize sales and pricing strategies in the urban real estate domain."
-
-## 📊 Overview
-This project is an end-to-end data engineering and analytics solution. I analyzed over **90,000 luxury housing records** in Bengaluru to identify market trends, builder performance, and buyer preferences. The goal was to build a real-world enterprise data pipeline using **Python, SQL, and Power BI**.
+"This project delivers an end-to-end Business Intelligence solution for Bengaluru's luxury real estate market. I developed a multi-page interactive dashboard that answers **10 critical business questions** regarding market trends, builder dominance, and consumer behavior. The pipeline features a custom **Python-based ETL process**, a structured **SQL (SQLite) data warehouse**, and advanced **DAX-driven visualizations**."
 
 ---
 
-## 🛠️ ETL Pipeline
+## 🛠️ ETL Pipeline & Feature Engineering
 
-### **Step 1: Data Cleaning & Preprocessing (Python)**
-I used **Pandas** to handle a large dataset of 100,000+ rows. Key tasks included:
-*   **Standardizing Currency:** Cleaned the `Ticket_Price_Cr` column by removing strings like "Cr" and "₹" to make it numeric.
-*   **Handling Nulls:** Removed rows with missing price data to ensure financial analysis remained accurate.
-*   **Feature Engineering:** Created new metrics like `Price_per_Sqft` and a `Booking_Flag` for better visualization.
-*   **Normalization:** Cleaned builder and location names to remove duplicates.
+### **Data Cleaning & Logic**
+<img width="602" height="333" alt="clean_and_load_terminal run" src="https://github.com/user-attachments/assets/7d2b6209-bf20-42d1-b8d1-55c09f30daa4" />
 
-<img width="602" height="333" alt="clean_and_load_terminal run" src="https://github.com/user-attachments/assets/b02d2ea9-d036-4b20-8227-347f3de93221" />
+I used **Python (Pandas)** to handle the dataset of 90,000+ rows. Since the raw data lacked a direct conversion metric, I engineered a **Booking_Status** feature to enable deeper sales analysis:
+*   **Booking Logic:** Properties with 'Ready to Move' status or 'Secondary' transaction types were classified as **'Booked'**, while others were marked as **'Inquiry'**.
+*   **Booking_Flag:** Created a numeric indicator (1/0) to calculate **Booking Conversion Rates** across micro-markets and builders.
+<img width="584" height="283" alt="2" src="https://github.com/user-attachments/assets/2466daab-cb74-4458-a2e6-b5182cf5aa81" />
 
-### **Step 2: Data Warehousing (SQL)**
-Instead of just using a flat CSV, I moved the data into a **SQL environment (SQLite)** using **SQLAlchemy**.
-*   Ensured data integrity and allowed for structured querying.
-*   The database (`real_estate.db`) serves as the **"Single Source of Truth"** for the dashboard.
-
-### **Step 3: Interactive Dashboarding (Power BI)**
-I connected Power BI to the SQL database via a **Python Script connection**.
-*   **Interactivity:** Added slicers for Builders and Markets for dynamic filtering.
-*   **Custom Logic:** Wrote **DAX measures** to calculate the "Average Market Amenity Score."
-*   **Spatial Analysis:** Integrated a Map visual to show geographic density.
-
-<img width="935" height="524" alt="powerBI" src="https://github.com/user-attachments/assets/d276f7fd-0cd7-41fa-9efb-02f39e3c0462" />
-
----
----
-
-## 🏗️ Technical Architecture & Methodology
-
-### **1. Data Cleaning Strategy**
-With **100,000+ records**, data integrity was the top priority:
-- **Noise Reduction:** Used Regex in Python to strip non-numeric characters from price fields, ensuring 100% calculation accuracy.
-- **Outlier Management:** Analyzed `Price_per_Sqft` to identify and handle anomalies that could skew the "Average Market Rate" KPIs.
-- **Deduplication:** Implemented string normalization to merge inconsistent builder names (e.g., "Prestige Group" vs "Prestige").
-
-### **2. Schema & Storage (SQL Integration)**
-Migrating to **SQLite** allowed for:
-- **Relational Structure:** Organized data to support complex queries and future-proof the pipeline for additional datasets.
-- **Optimized Performance:** Designed the table for rapid filtering, ensuring the Power BI dashboard remains responsive despite the large row count.
-
-### **3. Business Logic (DAX Implementation)**
-I implemented custom **DAX** to uncover hidden patterns:
-- **Market Valuation:** Created dynamic measures to track price shifts across different micro-markets.
-- **Amenity Impact:** Developed a correlation logic to see how `Amenity_Score` influences final `Ticket_Price_Cr`.
+### **Data Warehousing**
+*   **SQL Integration:** Processed data was migrated into a **SQLite** environment (`real_estate.db`) to ensure data integrity and allow for structured querying.
+*   **Validation:** Verified the database using SQL queries to confirm a successful migration of 90,981 records with 0 null values in key financial columns.
 
 ---
 
-## 🔍 SQL Data Validation
-To ensure the data was loaded correctly, I executed several validation queries:
+## 📊 Dashboard Analytics (Answering the 10 Business Questions)
 
-<img width="949" height="329" alt="SQL Database Validation Results" src="https://github.com/user-attachments/assets/294cba09-2e43-4257-9be6-7c63d22051cb" />
+The dashboard is divided into two strategic views to provide a comprehensive market analysis:
 
-1.  **Verification of Row Count**
-    *   **Query:** `SELECT COUNT(*) FROM luxury_housing;`
-    *   **Result:** Confirmed **90,981 records** successfully migrated.
-2.  **Builder Revenue Check**
-    *   **Query:** `SELECT Developer_Name, SUM(Ticket_Price_Cr) FROM luxury_housing GROUP BY Developer_Name ORDER BY 2 DESC LIMIT 5;`
-    *   **Purpose:** Validated that financial columns are numeric and aggregations are working.
-3.  **Null Value Audit**
-    *   **Query:** `SELECT COUNT(*) FROM luxury_housing WHERE Ticket_Price_Cr IS NULL;`
-    *   **Result:** **0 nulls** found.
+### **Page 1: Executive Market Overview**
+<img width="641" height="382" alt="powerbipage1" src="https://github.com/user-attachments/assets/a972ebd5-738e-4aae-aca4-0024a9881a52" />
+
+*   **Q1: Market Trends:** Analyzed quarterly booking trends segmented by 15+ micro-markets (Line Chart).
+*   **Q2 & Q10: Builder Performance:** Ranked developers by total revenue and identified the market leader (**Puravankara**) using Top-N filtering.
+*   **Q5: Configuration Demand:** Visualized the distribution of 3BHK, 4BHK, and 5BHK+ units across locations.
+*   **Q9: Geographical Insights:** Mapped luxury project concentration hotspots across Bengaluru.
+
+### **Page 2: Sales & Efficiency Deep-Dive**
+<img width="635" height="364" alt="powerbipage2" src="https://github.com/user-attachments/assets/092257dd-6a95-490f-b18e-f73cb1be0757" />
+
+*   **Q3: Amenity Impact:** Scatter plot correlating **Average Amenity Scores (7.51)** with Booking Success Rates.
+*   **Q4 & Q6: Efficiency Analysis:** 100% Stacked Bar charts identifying the most successful Sales Channels and Micro-Markets for conversion.
+*   **Q7: Builder Dominance Matrix:** A quarterly heatmap of revenue contribution by developer.
+*   **Q8: Possession Impact:** Analysis of how 'Ready to Move' vs. 'Under Construction' status affects different Buyer Types.
 
 ---
 
-## 💡 Key Business Insights
-*   📍 **Market Hotspots:** Luxury housing is highly concentrated in the **East (Whitefield)** and **South (Sarjapur)** corridors, driven by tech park proximity.
-*   🏢 **Product Demand:** Massive shift toward **3BHK and 4BHK** units; luxury buyers prioritize spacious living.
-*   ⭐ **The "Amenity Gap":** Average amenity score is **7.50**, indicating high-end facilities are now a standard expectation.
+## 🔍 SQL Data Validation Results
+<img width="949" height="329" alt="SQL Database Validation Results" src="https://github.com/user-attachments/assets/96319f51-3c08-4c74-ac92-63c83c5a30e7" />
+
+The integrity of the SQL database was verified with the following results:
+*   **Row Count:** 90,981 records.
+*   **Market Avg Amenity:** 7.51 (Confirmed via DAX and SQL).
+*   **Total Revenue KPI:** 1.16M Cr (Validated across all platforms).
 
 ---
 
 ## 📁 Repository Structure
-*   `clean_and_load.py`: Python script for cleaning and SQL insertion.
-*   `real_estate.db`: SQL database containing cleaned data.
-*   `Luxury_Housing_Analysis.pbix`: Final Power BI dashboard.
-*   `README.md`: Project documentation.
+*   `clean_and_load.py`: Python script for ETL, feature engineering, and SQL insertion.
+*   `real_estate.db`: SQL database containing the cleaned, structured data.
+*   `Luxury_Housing_Final.pbix`: 2-Page interactive Power BI report.
+*   `cleaned_luxury_data.xlsx`: Final processed dataset.
 
-## 🎓 Skills Learned
-*   Building complete **ETL pipelines**.
-*   **Database Management** via SQLAlchemy and SQLite.
-*   Advanced **DAX calculations** in Power BI.
-*   Data storytelling and **Business Intelligence**.
+## 🎓 Skills Mastered
+*   **Python:** Data cleaning, feature engineering, and SQLAlchemy integration.
+*   **SQL:** Schema design and data validation.
+*   **Power BI:** Multi-page dashboard design, DAX measures, and drill-down analytics.
+*   **Business Intelligence:** Translating raw data into actionable market insights.
 
